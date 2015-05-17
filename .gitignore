@@ -1,0 +1,10 @@
+# Directories
+/venv
+
+# Files
+/.env
+.DS_Store
+
+# Patterns
+.*.swp[op]
+*.py[co]
