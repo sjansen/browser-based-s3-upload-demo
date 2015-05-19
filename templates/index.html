@@ -5,26 +5,10 @@
     <title>Browser-Based S3 Upload</title>
   </head>
   <body>
-    <p>
-      <b>Region:</b> {{ region }}<br/>
-      <b>Bucket:</b> {{ bucket }}<br/>
-      <b>Key:</b> {{ form.key }}
-    </p>
+    <h1>Browser-Based S3 Upload</h1>
 
-    <form action="{{ form.action }}" method="POST" enctype="multipart/form-data">
-      <input type="hidden" name="acl"    value="{{ form.acl }}">
-      <input type="hidden" name="key"    value="{{ form.key }}">
-      <input type="hidden" name="policy" value="{{ form.policy }}">
-      <input type="hidden" name="success_action_status" value="201">
-
-      <input type="hidden" name="x-amz-algorithm"  value="{{ form['x-amz-algorithm'] }}">
-      <input type="hidden" name="x-amz-credential" value="{{ form['x-amz-credential'] }}">
-      <input type="hidden" name="x-amz-date"       value="{{ form['x-amz-date'] }}">
-      <input type="hidden" name="x-amz-signature"  value="{{ form['x-amz-signature'] }}">
-
-      <input type="file" name="file"><br />
-
-      <input type="submit" value="Upload">
-    </form>
+    <ul>
+      <li><a href="/form/">Form-based</a></li>
+    </ul>
   </body>
 </html>

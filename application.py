@@ -21,10 +21,14 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
+    return render_template('index.html')
+
+@app.route("/form/")
+def form_based():
     key  = str(uuid4())
     form = s3_upload_form(AWS_ACCESS_KEY, AWS_SECRET_KEY, REGION, BUCKET, key)
     ctx  = {'region': REGION, 'bucket': BUCKET, 'form': form}
-    return render_template('index.html', **ctx)
+    return render_template('form_based.html', **ctx)
 
 def hmac_sha256(key, msg):
     return hmac.new(key, msg.encode('utf-8'), hashlib.sha256).digest()
