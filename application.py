@@ -40,11 +40,13 @@ def sign(key, date, region, service, msg):
     key   = hmac_sha256(hash3, 'aws4_request')
     return hmac.new(key, msg.encode('utf-8'), hashlib.sha256).hexdigest()
 
-def s3_upload_form(access_key, secret_key, region, bucket, key):
+def s3_upload_form(access_key, secret_key, region, bucket, key=None, prefix=None):
+    assert (key is not None) or (prefix is not None)
+    if (key is not None) and (prefix is not None):
+        assert key.startswith(prefix)
     now = datetime.utcnow()
     form = {
       'acl': 'private',
-      'key': key,
       'success_action_status': '201',
       'x-amz-algorithm': 'AWS4-HMAC-SHA256',
       'x-amz-credential':
@@ -58,7 +60,6 @@ def s3_upload_form(access_key, secret_key, region, bucket, key):
       'expiration': expiration.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'conditions': [
         {'bucket': bucket},
-        {'key':    key},
         {'acl': 'private'},
         ['content-length-range', 32, 10485760],
         {'success_action_status': form['success_action_status']},
@@ -71,6 +72,16 @@ def s3_upload_form(access_key, secret_key, region, bucket, key):
         form['action'] = 'https://{}.s3.amazonaws.com/'.format(bucket)
     else:
         form['action'] = 'https://{}.s3-{}.amazonaws.com/'.format(bucket, region)
+    if key is not None:
+        form['key'] = key
+        policy['conditions'].append(
+          {'key':    key},
+        )
+    if prefix is not None:
+        form['prefix'] = prefix
+        policy['conditions'].append(
+          ["starts-with", "$key", prefix],
+        )
     form['policy'] = b64encode(json.dumps(policy))
     form['x-amz-signature'] = sign(secret_key, now, region, 's3', form['policy'])
     return form
