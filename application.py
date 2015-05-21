@@ -10,12 +10,11 @@ from uuid import uuid4
 
 from flask import Flask, render_template
 
-SERVICE = 's3'
 REGION  = os.environ.get('S3_REGION')
 BUCKET  = os.environ.get('S3_BUCKET')
 
-AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID')
+SECRET_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
 app = Flask(__name__)
 
@@ -26,7 +25,7 @@ def index():
 @app.route("/form/")
 def form_based():
     key  = str(uuid4())
-    form = s3_upload_form(AWS_ACCESS_KEY, AWS_SECRET_KEY, REGION, BUCKET, key)
+    form = s3_upload_form(ACCESS_KEY, SECRET_KEY, REGION, BUCKET, key=key)
     ctx  = {'region': REGION, 'bucket': BUCKET, 'form': form}
     return render_template('form_based.html', **ctx)
 
@@ -76,6 +75,9 @@ def s3_upload_form(access_key, secret_key, region, bucket, key):
     form['x-amz-signature'] = sign(secret_key, now, region, 's3', form['policy'])
     return form
 
-if __name__ == '__main__':
+def main():
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
+
+if __name__ == '__main__':
+    main()
