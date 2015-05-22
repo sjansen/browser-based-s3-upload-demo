@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Dropzone-Based S3 Upload</title>
+    <link rel="stylesheet" href="/static/dropzone.css" />
+  </head>
+  <body>
+    <h1>Dropzone-Based S3 Upload</h1>
+
+    <div id="s3-dropzone" class="dropzone"></div>
+
+    <script src="/static/dropzone.js"></script>
+    <script>
+Dropzone.options.s3Dropzone = {
+  url: '{{ form.action }}',
+  uploadMultiple: false,
+  init: function() {
+    this.on('processing', function(file) {
+      this.options.params = {
+        'acl':    '{{ form.acl }}',
+        'key':    '{{ form.prefix }}'+file.name,
+        'policy': '{{ form.policy }}',
+
+        'x-amz-algorithm':  '{{ form['x-amz-algorithm'] }}',
+        'x-amz-credential': '{{ form['x-amz-credential'] }}',
+        'x-amz-date':       '{{ form['x-amz-date'] }}',
+        'x-amz-signature':  '{{ form['x-amz-signature'] }}',
+
+        'success_action_status': '201'
+      };
+    });
+  }
+};
+    </script>
+  </body>
+</html>

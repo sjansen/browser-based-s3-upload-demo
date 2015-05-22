@@ -22,6 +22,13 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route("/dropzone/")
+def dropzone_based():
+    prefix = '{}/'.format(uuid4())
+    form = s3_upload_form(ACCESS_KEY, SECRET_KEY, REGION, BUCKET, prefix=prefix)
+    ctx  = {'form': form}
+    return render_template('dropzone_based.html', **ctx)
+
 @app.route("/form/")
 def form_based():
     key  = str(uuid4())
